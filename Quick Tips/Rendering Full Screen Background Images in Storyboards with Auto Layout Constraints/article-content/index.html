@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<title>Full Screen Background Images with Auto Layout Constraints in Storyboards</title>
+	</head>
+<body>
+<h1>Full Screen Background Images with Auto Layout Constraints in Storyboards</h1>
+
+<p>With the introduction of the iPhone X in 2017, Apple also introduced the concept of <em>safe layout guides</em> in Xcode 9 to help us build interfaces that would accommodate the phone’s notch-laden design. </p>
+
+<p>This changed a number of behaviors regarding the way views lay out in storyboards. For one, safe layout guides have the effect that all content within views is, by default, aligned to a <em>safe area</em>. Furthermore, when using Auto Layout to pin views against their nearest neighbor, even a standalone, top-level element will have its hooks set upon a ready-made <code>Safe Area</code> layer — not the outermost <code>View</code>.</p>
+
+<figure><img src="label-gif-capture.gif"/></figure>
+
+<p>And in most cases, this is fantastic: There’s often not a good reason for us to leave the Safe Area, and Xcode drives the point home to prevent us from doing so accidentally. </p>
+
+<p>Inevitably, though, we’ll encounter the need to venture out further. Perhaps we have an image that we want to insert as a custom, full-screen background:</p>
+
+<figure><img src="gif-capture-2.gif"/></figure>
+
+<p>Sticking to the Safe Area just won’t cut it here. </p>
+
+<p>But while the fix is obvious — we need to pin our constraints against the top-level <code>View</code> in the Document Outline — Xcode makes implementing it in storyboards much less so. </p>
+
+<p>We just saw how the handy <code>Add New Constraints</code> button doesn’t Just Work ™️. But take, for instance, the handy ability to Ctrl+Click+Drag a constraint from one item to another the Document Outline. If you try to do this against the <code>View</code> element, Xcode will present options for pinning to the <code>Safe Area</code> instead:</p>
+
+<figure><img src="drag-pin-to-view-in-storyboard.gif"/></figure>
+
+<p>Thankfully — and mainly because there’s usually 10 different ways to do things in storyboards 😆 — all isn’t lost. Here’s an approach I found that <em>does</em> work:</p>
+
+<ul>
+	<li>Using the <code>Add New Constraints</code> button, add the four <code>Leading</code>, <code>Trailing</code>, <code>Top</code>, and <code>Bottom</code> constraints to your image as shown before.</li>
+</ul>
+
+<figure><img src="screenshot-1.png"/></figure>
+
+<ul>
+	<li>Double-click on one of the constraints listed in the image view’s Size Inspector panel. This will open up the <em>constraint’s</em> Size Inspector panel.</li>
+	<li>From there, change the constraint’s <code>First Item</code> or <code>Second Item</code> — whichever refers to the Safe Area — to refer to the <code>Superview</code>. And make sure the <code>Constant</code> value is set to 0.</li>
+</ul>
+
+<figure><img src="manually-change-constraints.gif"/></figure>
+
+<ul>
+	<li>Repeat for the other three constraints</li>
+</ul>
+
+<p>This will get your image properly pinned to all edges of the screen. You’ll also likely want to change the image’s <strong>Content Mode</strong> attribute from <code>Aspect Fit</code> to <code>Aspect Fill</code>. (<code>Scale to Fill</code> would also achieve full coverage, but the distortion of the image may be undesirable. Up to you 🙂). </p>
+
+<p>Alas, this all feels a bit more involved than it should be. But given that it’s more of an edge case (no pun intended), I was just glad that there <em>is</em> still a way to handle it in storyboards. </p>
+
+<p>Which I think is really important. </p>
+
+<p>Yes, we <em>could</em> configure these constraints in our code — setting the image view’s <code>translatesAutoresizingMaskIntoConstraints</code> property to <code>false</code>, setting its anchors to equal the anchors of the <code>view</code> in our view controller, etc, etc — but that’s exactly the kind of boilerplate and ceremony that storyboards are so great at mitigating. </p>
+
+<p>So, if you came here confused, but with a similar air of defiance and Storyboard zeal, I hope this post was helpful in keeping you on the right track 🙂. </p>
+
+</body>
+</html>
+
